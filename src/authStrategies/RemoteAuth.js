@@ -125,7 +125,12 @@ class RemoteAuth extends BaseAuthStrategy {
         }
         if (sessionExists) {
             await this.store.extract({session: this.sessionName, path: compressedSessionPath});
-            await this.unCompressSession(compressedSessionPath);
+            try {
+                await this.unCompressSession(compressedSessionPath);
+            } catch (e) {
+                await this.deleteRemoteSession();
+                fs.mkdirSync(this.userDataDir, { recursive: true });
+            }
         } else {
             fs.mkdirSync(this.userDataDir, { recursive: true });
         }
