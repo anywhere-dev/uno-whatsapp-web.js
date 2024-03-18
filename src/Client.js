@@ -127,6 +127,10 @@ class Client extends EventEmitter {
             referer: 'https://whatsapp.com/'
         });
 
+        await page.evaluate(`function getElementByXpath(path) {
+            return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+          }`);
+
         await page.evaluate(function (selectors) {
             function checkAndUpdateCookie(name, value) {
                 // Função para obter o valor de um cookie pelo nome dele
@@ -158,10 +162,6 @@ class Client extends EventEmitter {
             // Seta o valor como w, pois quero que funcione. Para testes com a versão nova, coloque o valor como c
             checkAndUpdateCookie("wa_build", "w");
         });
-
-        await page.evaluate(`function getElementByXpath(path) {
-            return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-          }`);
 
         let lastPercent = null,
             lastPercentMessage = null;
