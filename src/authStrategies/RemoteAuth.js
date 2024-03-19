@@ -57,7 +57,12 @@ class RemoteAuth extends BaseAuthStrategy {
         this.userDataDir = dirPath;
         this.sessionName = sessionDirName;
 
-        await this.extractRemoteSession();
+        try {
+            await this.extractRemoteSession();
+        } catch (e) {
+            console.log(e);
+            throw e;
+        }
 
         this.client.options.puppeteer = {
             ...puppeteerOpts,
@@ -117,6 +122,7 @@ class RemoteAuth extends BaseAuthStrategy {
         const pathExists = await this.isValidPath(this.userDataDir);
         const compressedSessionPath = `${this.sessionName}.zip`;
         const sessionExists = await this.store.sessionExists({session: this.sessionName});
+        console.log('Extract Remote Session', compressedSessionPath, sessionExists, pathExists);
         if (pathExists) {
             await fs.promises.rm(this.userDataDir, {
                 recursive: true,
@@ -138,6 +144,7 @@ class RemoteAuth extends BaseAuthStrategy {
 
     async deleteRemoteSession() {
         const sessionExists = await this.store.sessionExists({session: this.sessionName});
+        console.log('Delete Remote Session', compressedSessionPath, sessionExists, pathExists);
         if (sessionExists) await this.store.delete({session: this.sessionName});
     }
 
