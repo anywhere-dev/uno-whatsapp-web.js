@@ -118,6 +118,11 @@ class Client extends EventEmitter {
         this.pupBrowser = browser;
         this.pupPage = page;
 
+
+        this.pupPage.on("error", async () => {
+            this.emit(Events.AUTHENTICATION_FAILURE);
+        });
+
         await this.authStrategy.afterBrowserInitialized();
         await this.initWebVersionCache();
 
