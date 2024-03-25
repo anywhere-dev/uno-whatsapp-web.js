@@ -101,6 +101,7 @@ class RemoteAuth extends BaseAuthStrategy {
     async storeRemoteSession(options) {
         /* Compress & Store Session */
         const pathExists = await this.isValidPath(this.userDataDir);
+        console.log("STORE_SESSION", pathExists);
         if (pathExists) {
             await this.compressSession();
             await this.store.save({session: this.sessionName});
@@ -108,7 +109,9 @@ class RemoteAuth extends BaseAuthStrategy {
             await fs.promises.rm(`${this.tempDir}`, {
                 recursive: true,
                 force: true
-            }).catch(() => {});
+            }).catch((e) => {
+                console.log("STORE_SESSION_CATCH", e);
+            });
             if(options && options.emit) this.client.emit(Events.REMOTE_SESSION_SAVED);
         }
     }
@@ -117,6 +120,7 @@ class RemoteAuth extends BaseAuthStrategy {
         const pathExists = await this.isValidPath(this.userDataDir);
         const compressedSessionPath = `${this.sessionName}.zip`;
         const sessionExists = await this.store.sessionExists({session: this.sessionName});
+        console.log("EXTRACT_SESSION - PATH | SESSION", pathExists, sessionExists);
         if (pathExists) {
             await fs.promises.rm(this.userDataDir, {
                 recursive: true,
